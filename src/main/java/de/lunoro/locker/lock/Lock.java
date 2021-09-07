@@ -1,30 +1,37 @@
 package de.lunoro.locker.lock;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 
 import java.util.List;
+import java.util.UUID;
 
-public abstract class Lock {
+@AllArgsConstructor
+@Getter
+public class Lock {
 
-    @Getter
-    public Player owner;
-    @Getter
+    public UUID owner;
     public Location blockLocation;
-    @Getter
-    public List<Player> trustedMembers;
+    public List<UUID> trustedMembers;
 
     public void trust(Player player) {
-        trustedMembers.add(player);
+        trustedMembers.add(player.getUniqueId());
     }
 
-    public Player searchForTrustedMember(Player player) {
-        for (Player trustedMember : trustedMembers) {
-            if (trustedMember.equals(player)) {
-                return trustedMember;
+    public boolean isPlayerTrusted(Player player) {
+        for (UUID trustedMember : trustedMembers) {
+            if (trustedMember.equals(player.getUniqueId())) {
+                return true;
             }
         }
-        return null;
+        return false;
+    }
+
+    public BlockType getBlockTypeOfLock() {
+        return blockLocation.getBlockType();
     }
 }

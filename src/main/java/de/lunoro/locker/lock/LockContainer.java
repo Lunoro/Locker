@@ -1,23 +1,30 @@
 package de.lunoro.locker.lock;
 
-import java.util.ArrayList;
+import de.lunoro.locker.Locker;
+import lombok.Getter;
+
+import java.nio.file.Paths;
 import java.util.List;
 
 public class LockContainer {
 
+    @Getter
     private static final LockContainer instance = new LockContainer();
     private List<Lock> lockList;
+    private final LockLoader lockLoader;
 
     private LockContainer() {
-
+        lockLoader = new LockLoader(Paths.get(Locker.getInstance().getConfigDir() + "\\lock.conf"));
     }
 
-    private List<Lock> fillList() {
-        List<Lock> list = new ArrayList<>();
-        return list;
+    public void load() {
+        lockList = lockLoader.load();
     }
 
-    public void saveLock(Lock lock) {
-        lockList.add(lock);
+    public void save() {
+        lockLoader.clear();
+        for (Lock lock : lockList) {
+            lockLoader.save(lock);
+        }
     }
 }
