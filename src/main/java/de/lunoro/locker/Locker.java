@@ -1,20 +1,18 @@
 package de.lunoro.locker;
 
 import com.google.inject.Inject;
-import de.lunoro.locker.commands.TestCommand;
-import de.lunoro.locker.lock.Lock;
+import de.lunoro.locker.listeners.BlockPlaceListener;
+import de.lunoro.locker.listeners.BlockInteractListener;
 import de.lunoro.locker.lock.LockContainer;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 
-import java.awt.*;
 import java.nio.file.Path;
 
 @Plugin(
@@ -43,14 +41,19 @@ public class Locker {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        instance = this;
         lockContainer = LockContainer.getInstance();
+        instance = this;
+        registerListeners();
         lockContainer.load();
-        logger.info(Color.RED + "loaded");
     }
 
     @Listener
-    public void onServerStart(GameStoppedServerEvent event) {
+    public void onServerStop(GameStoppedServerEvent event) {
         lockContainer.save();
+    }
+
+    private void registerListeners() {
+        Sponge.getEventManager().registerListeners(this, new BlockPlaceListener());
+        Sponge.getEventManager().registerListeners(this, new BlockInteractListener());
     }
 }
