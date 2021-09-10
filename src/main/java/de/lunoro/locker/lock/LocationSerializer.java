@@ -31,7 +31,9 @@ public class LocationSerializer implements TypeSerializer<Location> {
 
     @Override
     public void serialize(TypeToken<?> typeToken, Location loc, ConfigurationNode value) throws ObjectMappingException {
-        value.getNode("world").setValue(Sponge.getServer().getWorld(loc.createSnapshot().getWorldUniqueId()).get().getName());
+        World world = (World) loc.getExtent();
+        System.out.println("WORLD: " + world.getName());
+        value.getNode("world").setValue(world.getName());
         value.getNode("x").setValue(loc.getX());
         value.getNode("y").setValue(loc.getY());
         value.getNode("z").setValue(loc.getZ());

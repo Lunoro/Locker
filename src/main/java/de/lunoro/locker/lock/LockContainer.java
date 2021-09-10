@@ -3,6 +3,7 @@ package de.lunoro.locker.lock;
 import de.lunoro.locker.Locker;
 import lombok.Getter;
 import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -19,6 +20,7 @@ public class LockContainer {
     }
 
     public void load() {
+        System.out.println("Jetzt in load!");
         lockList = lockLoader.load();
     }
 
@@ -29,12 +31,24 @@ public class LockContainer {
         }
     }
 
-    public Lock get(Location location) {
+    public void addLock(Lock lock) {
+        lockList.add(lock);
+    }
+
+    public void delLock(Location<World> location) {
+        get(location);
+    }
+
+    public Lock get(Location<World> location) {
         for (Lock lock : lockList) {
             if (lock.getBlockLocation().equals(location)) {
                 return lock;
             }
         }
         return null;
+    }
+
+    public List<Lock> getLockList() {
+        return lockList;
     }
 }

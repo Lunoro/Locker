@@ -12,17 +12,21 @@ import org.spongepowered.api.world.Location;
 public class BlockInteractListener {
 
     @Listener
-    public void onInteract(InteractBlockEvent event) {
+    public void onInteract(InteractBlockEvent.Secondary event) {
         if (!(event.getSource() instanceof Player)) return;
         Player player = (Player) event.getSource();
         BlockSnapshot targetBlock = event.getTargetBlock();
         Location targetBlockLocation = targetBlock.getLocation().get();
         Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
-        if (lockedBlock == null) {
-            if (lockedBlock.isPlayerTrusted(player)) return;
+        if (!(lockedBlock == null)) {
+            if (lockedBlock.isPlayerTrusted(player)) {
+                player.sendMessage(Text.of("You are not trusted"));
+                return;
+            }
             // DEBUG
             player.sendMessage(Text.of("Chest is locked!"));
             event.setCancelled(true);
+
         }
     }
 }

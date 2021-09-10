@@ -26,6 +26,7 @@ public class LockSerializer implements TypeSerializer<Lock> {
     @Override
     public void serialize(@NonNull TypeToken<?> type, @Nullable Lock lock, @NonNull ConfigurationNode node) throws ObjectMappingException {
         node.getNode("owner").setValue(TypeTokens.UUID_TOKEN, lock.getOwner());
+        System.out.println(lock.getBlockLocation());
         node.getNode("location").setValue(TypeToken.of(Location.class), lock.getBlockLocation());
         node.getNode("trustedMembers").setValue(new TypeToken<List<UUID>>() {
         }, lock.getTrustedMembers());

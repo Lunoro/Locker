@@ -1,18 +1,23 @@
 package de.lunoro.locker;
 
 import com.google.inject.Inject;
+import de.lunoro.locker.commands.TrustCommand;
+import de.lunoro.locker.commands.UnlockCommand;
 import de.lunoro.locker.listeners.BlockPlaceListener;
 import de.lunoro.locker.listeners.BlockInteractListener;
 import de.lunoro.locker.lock.LockContainer;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Plugin(
@@ -41,15 +46,30 @@ public class Locker {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        lockContainer = LockContainer.getInstance();
+        try {
+            Files.createDirectories(configDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         instance = this;
-        registerListeners();
+        lockContainer = LockContainer.getInstance();
         lockContainer.load();
+        registerListeners();
+        registerCommands();
     }
 
     @Listener
     public void onServerStop(GameStoppedServerEvent event) {
         lockContainer.save();
+    }
+
+    private void registerCommands() {
+        CommandSpec.builder()
+                .executor(new TrustCommand())
+                .build();
+        CommandSpec.builder()
+                .executor(new UnlockCommand())
+                .build();
     }
 
     private void registerListeners() {
