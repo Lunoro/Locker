@@ -15,6 +15,7 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -64,12 +65,16 @@ public class Locker {
     }
 
     private void registerCommands() {
-        CommandSpec.builder()
-                .executor(new TrustCommand())
-                .build();
-        CommandSpec.builder()
-                .executor(new UnlockCommand())
-                .build();
+        Sponge.getCommandManager().register(this,
+                CommandSpec.builder()
+                        .executor(new TrustCommand())
+                        .build(), "trust");
+        Sponge.getCommandManager().register(this,
+                CommandSpec.builder()
+                        .executor(new UnlockCommand())
+                        .description(Text.of(""))
+                        .build(), "unlock");
+
     }
 
     private void registerListeners() {

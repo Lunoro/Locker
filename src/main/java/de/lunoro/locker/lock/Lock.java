@@ -38,6 +38,9 @@ public class Lock {
     }
 
     public boolean isPlayerTrusted(Player player) {
+        if (owner.equals(player.getUniqueId())) {
+            return true;
+        }
         for (UUID trustedMember : trustedMembers) {
             if (trustedMember.equals(player.getUniqueId())) {
                 return true;

@@ -36,7 +36,8 @@ public class LockContainer {
     }
 
     public void delLock(Location<World> location) {
-        get(location);
+        Lock removeLock = get(location);
+        lockList.remove(removeLock);
     }
 
     public Lock get(Location<World> location) {

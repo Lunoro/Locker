@@ -19,14 +19,10 @@ public class BlockInteractListener {
         Location targetBlockLocation = targetBlock.getLocation().get();
         Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
         if (!(lockedBlock == null)) {
-            if (lockedBlock.isPlayerTrusted(player)) {
-                player.sendMessage(Text.of("You are not trusted"));
-                return;
+            if (!lockedBlock.isPlayerTrusted(player)) {
+                player.sendMessage(Text.of("Chest is locked!"));
+                event.setCancelled(true);
             }
-            // DEBUG
-            player.sendMessage(Text.of("Chest is locked!"));
-            event.setCancelled(true);
-
         }
     }
 }

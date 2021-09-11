@@ -1,6 +1,10 @@
 package de.lunoro.locker.commands;
 
+import de.lunoro.locker.commands.util.ValidLockBlockCheckUtil;
+import de.lunoro.locker.commands.util.ViewedBlockUtil;
+import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -8,7 +12,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.util.blockray.BlockRay;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -18,10 +22,16 @@ public class UnlockCommand implements CommandExecutor {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) return null;
         Player player = (Player) src;
-        BlockRay<World> blockRay = BlockRay.from(player).whilst(BlockRay.notAirFilter()).build();
-        Location<World> lookedBlockLocation = blockRay.end().get().getLocation();
-        if (lookedBlockLocation.getBlock().getType().equals(BlockTypes.CHEST)) {
-            LockContainer.getInstance().delLock(lookedBlockLocation);
+        Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
+        BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
+        if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
+            Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
+            if (lock == null) return null;
+            if (lock.getOwner().equals(player.getUniqueId())) {
+                LockContainer.getInstance().delLock(viewedBlockLocation);
+                System.out.println(LockContainer.getInstance().getLockList());
+                player.sendMessage(Text.of("Chest unlocked"));
+            }
         }
         return CommandResult.success();
     }
