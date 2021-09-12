@@ -20,7 +20,6 @@ public class LockContainer {
     }
 
     public void load() {
-        System.out.println("Jetzt in load!");
         lockList = lockLoader.load();
     }
 

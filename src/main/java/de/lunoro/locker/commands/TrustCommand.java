@@ -1,11 +1,10 @@
 package de.lunoro.locker.commands;
 
-import de.lunoro.locker.commands.util.ValidLockBlockCheckUtil;
-import de.lunoro.locker.commands.util.ViewedBlockUtil;
+import de.lunoro.locker.util.ValidLockBlockCheckUtil;
+import de.lunoro.locker.util.ViewedBlockUtil;
 import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

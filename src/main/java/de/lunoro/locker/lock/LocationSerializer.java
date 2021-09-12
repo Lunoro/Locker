@@ -21,7 +21,6 @@ public class LocationSerializer implements TypeSerializer<Location> {
         double z = value.getNode("z").getValue(doubleTypeToken);
         assert name != null;
         if (!Sponge.getServer().getWorld(name).isPresent()) {
-            System.out.println("This world does not exist");
             return null;
         }
         World w = Sponge.getServer().getWorld(name).get();
@@ -32,7 +31,6 @@ public class LocationSerializer implements TypeSerializer<Location> {
     @Override
     public void serialize(TypeToken<?> typeToken, Location loc, ConfigurationNode value) throws ObjectMappingException {
         World world = (World) loc.getExtent();
-        System.out.println("WORLD: " + world.getName());
         value.getNode("world").setValue(world.getName());
         value.getNode("x").setValue(loc.getX());
         value.getNode("y").setValue(loc.getY());

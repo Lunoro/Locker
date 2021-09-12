@@ -2,9 +2,8 @@ package de.lunoro.locker.listeners;
 
 import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
+import de.lunoro.locker.util.ValidLockBlockCheckUtil;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.block.tileentity.carrier.Chest;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -20,12 +19,9 @@ public class BlockPlaceListener {
         Optional<Player> optPlayer = event.getCause().first(Player.class);
         if (optPlayer.isPresent()) {
             Player player = optPlayer.get();
-            player.sendMessage(Text.of("Test"));
-            if (block.getState().getType().equals(BlockTypes.CHEST)) {
+            if (ValidLockBlockCheckUtil.isValidLockBlock(block.getState().getType())) {
                 LockContainer.getInstance().addLock(new Lock(player.getUniqueId(), block.getLocation().get()));
-                // DEBUG
-                player.sendMessage(Text.of("Chest placed!"));
-                System.out.println(LockContainer.getInstance().getLockList());
+                player.sendMessage(Text.of("Locked block placed!"));
             }
         }
     }

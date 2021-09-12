@@ -2,7 +2,6 @@ package de.lunoro.locker.lock;
 
 import lombok.Getter;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.tileentity.carrier.Chest;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -19,11 +18,6 @@ public class Lock {
 
     public Lock(UUID owner, Location blockLocation) {
         this.blockLocation = blockLocation;
-        this.owner = owner;
-    }
-
-    public Lock(UUID owner, Chest chest) {
-        this.blockLocation = chest.getLocation();
         this.owner = owner;
     }
 

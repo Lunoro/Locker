@@ -2,6 +2,7 @@ package de.lunoro.locker.listeners;
 
 import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
+import de.lunoro.locker.util.ValidLockBlockCheckUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -18,7 +19,8 @@ public class BlockInteractListener {
         BlockSnapshot targetBlock = event.getTargetBlock();
         Location targetBlockLocation = targetBlock.getLocation().get();
         Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
-        if (!(lockedBlock == null)) {
+        if (lockedBlock != null) return;
+        if (ValidLockBlockCheckUtil.isValidLockBlock(targetBlock.getState().getType())) {
             if (!lockedBlock.isPlayerTrusted(player)) {
                 player.sendMessage(Text.of("Chest is locked!"));
                 event.setCancelled(true);

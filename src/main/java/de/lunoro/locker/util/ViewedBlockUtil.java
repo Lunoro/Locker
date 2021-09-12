@@ -1,4 +1,4 @@
-package de.lunoro.locker.commands.util;
+package de.lunoro.locker.util;
 
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -16,8 +16,6 @@ public class ViewedBlockUtil {
         Optional<BlockRayHit<World>> hitOptional = blockRay.end();
         if (hitOptional.isPresent()) {
             Location<World> location = hitOptional.get().getLocation();
-            System.out.println(location.getBlock().getName());
-            System.out.println(location);
             return location;
         }
         return null;
