@@ -5,7 +5,7 @@ import org.spongepowered.api.block.BlockType;
 public class ValidLockBlockCheckUtil {
 
     public static boolean isValidLockBlock(BlockType blockType) {
-        // I use #contains("_DOOR") here because the blocktype trapdoor contains "DOOR" in his string too.
-        return blockType.getName().contains("CHEST") || blockType.getName().contains("_DOOR") || blockType.getName().contains("FENCE_GATE");
+        // I use #contains("_door") here because the blocktype trapdoor contains "door" in his name too.
+        return blockType.getName().contains("chest") || blockType.getName().contains("_door") || blockType.getName().contains("fence_gate");
     }
 }

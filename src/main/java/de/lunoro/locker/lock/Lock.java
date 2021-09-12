@@ -12,11 +12,11 @@ import java.util.UUID;
 @Getter
 public class Lock {
 
-    public UUID owner;
-    public Location<World> blockLocation;
-    public List<UUID> trustedMembers;
+    private final UUID owner;
+    private final Location<World> blockLocation;
+    private List<UUID> trustedMembers;
 
-    public Lock(UUID owner, Location blockLocation) {
+    public Lock(UUID owner, Location<World> blockLocation) {
         this.blockLocation = blockLocation;
         this.owner = owner;
     }

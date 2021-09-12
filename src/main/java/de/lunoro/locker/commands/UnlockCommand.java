@@ -23,19 +23,31 @@ public class UnlockCommand implements CommandExecutor {
         Player player = (Player) src;
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
         BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
+        player.sendMessage(Text.of(viewedBlockType.getName()));
         if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
-            if (lock == null) return null;
+            if (lock == null) return CommandResult.empty();
             if (lock.getOwner().equals(player.getUniqueId())) {
-                unlockChest(player, viewedBlockLocation);
+                unlockChestNextToIfExists(lock);
+                unlockChest(lock);
+                player.sendMessage(Text.of("Chest unlocked"));
             }
         }
         return CommandResult.success();
     }
 
-    private void unlockChest(Player player, Location<World> viewedBlockLocation) {
-        LockContainer.getInstance().delLock(viewedBlockLocation);
-        System.out.println(LockContainer.getInstance().getLockList());
-        player.sendMessage(Text.of("Chest unlocked"));
+    private void unlockChest(Lock lock) {
+        LockContainer.getInstance().delLock(lock.getBlockLocation());
+    }
+
+    private void unlockChestNextToIfExists(Lock lock) {
+        System.out.println("TRY TO UNLOCK NEXT CHEST");
+        Lock lockNextTo = LockContainer.getInstance().getLockNextTo(lock);
+        if (lockNextTo == null) return;
+        System.out.println(lockNextTo.getBlockTypeOfLock().getName());
+        if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
+            LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
+            System.out.println("Near Chest Unlocked");
+        }
     }
 }

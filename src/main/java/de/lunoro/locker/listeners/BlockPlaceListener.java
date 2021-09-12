@@ -19,6 +19,7 @@ public class BlockPlaceListener {
         Optional<Player> optPlayer = event.getCause().first(Player.class);
         if (optPlayer.isPresent()) {
             Player player = optPlayer.get();
+            System.out.println(block.getState().getType().getName());
             if (ValidLockBlockCheckUtil.isValidLockBlock(block.getState().getType())) {
                 LockContainer.getInstance().addLock(new Lock(player.getUniqueId(), block.getLocation().get()));
                 player.sendMessage(Text.of("Locked block placed!"));
