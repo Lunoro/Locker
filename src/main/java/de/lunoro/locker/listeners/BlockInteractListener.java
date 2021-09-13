@@ -12,6 +12,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Optional;
+
 public class BlockInteractListener {
 
     @Listener
@@ -19,14 +21,20 @@ public class BlockInteractListener {
         if (!(event.getSource() instanceof Player)) return;
         Player player = (Player) event.getSource();
         BlockSnapshot targetBlock = event.getTargetBlock();
-        Location<World> targetBlockLocation = targetBlock.getLocation().get();
-        Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
-        if (lockedBlock == null) return;
+        Optional<Location<World>> locOpt = targetBlock.getLocation();
         if (ValidLockBlockCheckUtil.isValidLockBlock(targetBlock.getState().getType())) {
-            System.out.println(Sponge.getServer().getPlayer(lockedBlock.getOwner()));
-            if (!lockedBlock.isPlayerTrusted(player)) {
-                player.sendMessage(Text.of("Chest is locked!"));
-                event.setCancelled(true);
+            if (!(locOpt.isPresent())) return;
+            Location<World> targetBlockLocation = locOpt.get();
+            System.out.println(targetBlockLocation.getBlock().getName());
+            Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
+            if (lockedBlock == null) return;
+            if (ValidLockBlockCheckUtil.isValidLockBlock(targetBlock.getState().getType())) {
+                System.out.println(Sponge.getServer().getPlayer(lockedBlock.getOwner()));
+                if (!lockedBlock.isPlayerTrusted(player)) {
+                    player.sendMessage(Text.of("Chest is locked!"));
+                    event.setCancelled(true);
+
+                }
             }
         }
     }

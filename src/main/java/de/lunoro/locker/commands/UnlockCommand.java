@@ -1,5 +1,6 @@
 package de.lunoro.locker.commands;
 
+import de.lunoro.locker.util.AdjoiningLockUtil;
 import de.lunoro.locker.util.ValidLockBlockCheckUtil;
 import de.lunoro.locker.util.ViewedBlockUtil;
 import de.lunoro.locker.lock.Lock;
@@ -23,31 +24,32 @@ public class UnlockCommand implements CommandExecutor {
         Player player = (Player) src;
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
         BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
-        player.sendMessage(Text.of(viewedBlockType.getName()));
         if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
             if (lock == null) return CommandResult.empty();
             if (lock.getOwner().equals(player.getUniqueId())) {
-                unlockChestNextToIfExists(lock);
-                unlockChest(lock);
+                unlockAdjoiningLockIfExist(lock);
+                unlockBlock(lock);
                 player.sendMessage(Text.of("Chest unlocked"));
             }
         }
         return CommandResult.success();
     }
 
-    private void unlockChest(Lock lock) {
+    private void unlockBlock(Lock lock) {
         LockContainer.getInstance().delLock(lock.getBlockLocation());
     }
 
-    private void unlockChestNextToIfExists(Lock lock) {
-        System.out.println("TRY TO UNLOCK NEXT CHEST");
-        Lock lockNextTo = LockContainer.getInstance().getLockNextTo(lock);
-        if (lockNextTo == null) return;
-        System.out.println(lockNextTo.getBlockTypeOfLock().getName());
+    private void unlockAdjoiningLockIfExist(Lock lock) {
+        Lock lockNextTo = AdjoiningLockUtil.getInstance().getAdjoiningLock(lock);
+        if (lockNextTo == null) {
+            lockNextTo = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLock(lock);
+            if (lockNextTo != null) {
+                LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
+            }
+        }
         if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
             LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
-            System.out.println("Near Chest Unlocked");
         }
     }
 }

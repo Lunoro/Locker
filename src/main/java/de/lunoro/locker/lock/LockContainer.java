@@ -50,49 +50,4 @@ public class LockContainer {
         }
         return null;
     }
-
-    // Checks the grid that way
-    // 0 X 0
-    // X C X
-    // 0 X 0
-    // C = chests; X = checked blocks; 0 = not checked blocks
-
-    public Lock getLockNextTo(Lock lock) {
-        return returnNextLockOnZAndXAxis(lock);
-    }
-
-    private Lock returnNextLockOnZAndXAxis(Lock lock) {
-        Location<World> lockLocation = lock.getBlockLocation();
-        for (int i = lockLocation.getBlockZ() - 1; i <= lockLocation.getBlockZ() + 1; i++) {
-            System.out.println("SEARCH FOR Z: " + i);
-            System.out.println(i);
-            Location<World> location = new Location<World>(lockLocation.getExtent(), lockLocation.getBlockX(), lockLocation.getBlockY(), i);
-            Lock adjoiningLock = get(location);
-            if (adjoiningLock != null) {
-                if (adjoiningLock.getBlockTypeOfLock().equals(lock.getBlockTypeOfLock())) {
-                    if (lockLocation.equals(location)) continue;
-                    System.out.println("RETURN BLOCK");
-                    return adjoiningLock;
-                }
-            }
-        }
-        return returnNextLockOnXAxis(lock);
-    }
-
-    private Lock returnNextLockOnXAxis(Lock lock) {
-        Location<World> lockLocation = lock.getBlockLocation();
-        for (int i = lockLocation.getBlockX() - 1; i <= lockLocation.getBlockX() + 1; i++) {
-            System.out.println("SEARCH FOR X: " + i);
-            Location<World> location = new Location<World>(lockLocation.getExtent(), i, lockLocation.getBlockY(), lockLocation.getBlockZ());
-            Lock adjoiningLock = get(location);
-            if (adjoiningLock != null) {
-                if (adjoiningLock.getBlockTypeOfLock().equals(lock.getBlockTypeOfLock())) {
-                    if (lockLocation.equals(location)) continue;
-                    System.out.println("RETURN BLOCK");
-                    return adjoiningLock;
-                }
-            }
-        }
-        return null;
-    }
 }
