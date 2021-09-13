@@ -39,7 +39,6 @@ public class LockContainer {
     public void delLock(Location<World> location) {
         Lock lock = get(location);
         lockList.remove(lock);
-        System.out.println("LOCK WAS REMOVED FROM LIST");
     }
 
     public Lock get(Location<World> location) {

@@ -2,15 +2,16 @@ package de.lunoro.locker.util;
 
 import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
+import lombok.Getter;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public class AdjoiningLockUtil {
 
-    private static final AdjoiningLockUtil instance = new AdjoiningLockUtil();
+    @Getter
+    private static AdjoiningLockUtil instance = new AdjoiningLockUtil();
 
-    private AdjoiningLockUtil() {
-    }
+    private AdjoiningLockUtil() {}
 
     private Location<World> lockLocation;
 
@@ -22,9 +23,7 @@ public class AdjoiningLockUtil {
     public Location<World> getUpperOrUnderAdjoiningLockLocation(Lock lock) {
         lockLocation = lock.getBlockLocation();
         for (int i = lockLocation.getBlockY() - 1; i <= lockLocation.getBlockY() + 1; i++) {
-            System.out.println("In for loop");
             Location<World> location = new Location<>(lockLocation.getExtent(), lockLocation.getBlockX(), i, lockLocation.getBlockZ());
-            System.out.println(location);
             if (location.getBlockType().equals(lock.getBlockTypeOfLock())) {
                 if (lockLocation.equals(location)) continue;
                 return location;
@@ -34,10 +33,12 @@ public class AdjoiningLockUtil {
     }
 
     // Checks the grid that way
-    // 0 X 0
-    // X C X
-    // 0 X 0
-    // C = chests; X = checked blocks; 0 = not checked blocks
+    // Z-Axis
+    // | 0 X 0
+    // | X B X
+    // | 0 X 0
+    // L _ _ _ X-Axis
+    // B = locked block; X = checked blocks; 0 = not checked blocks
 
     public Lock getAdjoiningLock(Lock lock) {
         return returnNextLockOnZAndXAxis(lock);
@@ -71,9 +72,5 @@ public class AdjoiningLockUtil {
             }
         }
         return null;
-    }
-
-    public static AdjoiningLockUtil getInstance() {
-        return instance;
     }
 }

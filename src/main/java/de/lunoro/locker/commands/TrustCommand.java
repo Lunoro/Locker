@@ -15,16 +15,19 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Optional;
+
 public class TrustCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) return null;
         Player player = (Player) src;
-        Player target = args.<Player>getOne("player").get();
+        Optional<Player> optionalPlayer = args.<Player>getOne("player");
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
-        System.out.println(viewedBlockLocation);
         BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
+        if (!(optionalPlayer.isPresent())) return CommandResult.empty();
+        Player target = optionalPlayer.get();
         if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
             if (lock == null) return null;

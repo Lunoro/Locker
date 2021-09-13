@@ -1,6 +1,5 @@
 package de.lunoro.locker.commands;
 
-import de.lunoro.locker.util.AdjoiningLockUtil;
 import de.lunoro.locker.util.ValidLockBlockCheckUtil;
 import de.lunoro.locker.util.ViewedBlockUtil;
 import de.lunoro.locker.lock.Lock;
@@ -28,28 +27,10 @@ public class UnlockCommand implements CommandExecutor {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
             if (lock == null) return CommandResult.empty();
             if (lock.getOwner().equals(player.getUniqueId())) {
-                unlockAdjoiningLockIfExist(lock);
-                unlockBlock(lock);
+                lock.unlock();
                 player.sendMessage(Text.of("Chest unlocked"));
             }
         }
         return CommandResult.success();
-    }
-
-    private void unlockBlock(Lock lock) {
-        LockContainer.getInstance().delLock(lock.getBlockLocation());
-    }
-
-    private void unlockAdjoiningLockIfExist(Lock lock) {
-        Lock lockNextTo = AdjoiningLockUtil.getInstance().getAdjoiningLock(lock);
-        if (lockNextTo == null) {
-            lockNextTo = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLock(lock);
-            if (lockNextTo != null) {
-                LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
-            }
-        }
-        if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
-            LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
-        }
     }
 }

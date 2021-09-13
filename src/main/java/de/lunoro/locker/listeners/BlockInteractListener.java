@@ -3,6 +3,7 @@ package de.lunoro.locker.listeners;
 import de.lunoro.locker.lock.Lock;
 import de.lunoro.locker.lock.LockContainer;
 import de.lunoro.locker.util.ValidLockBlockCheckUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
@@ -21,19 +22,16 @@ public class BlockInteractListener {
         if (!(event.getSource() instanceof Player)) return;
         Player player = (Player) event.getSource();
         BlockSnapshot targetBlock = event.getTargetBlock();
-        Optional<Location<World>> locOpt = targetBlock.getLocation();
+        Optional<Location<World>> optionalLocation = targetBlock.getLocation();
         if (ValidLockBlockCheckUtil.isValidLockBlock(targetBlock.getState().getType())) {
-            if (!(locOpt.isPresent())) return;
-            Location<World> targetBlockLocation = locOpt.get();
-            System.out.println(targetBlockLocation.getBlock().getName());
+            if (!(optionalLocation.isPresent())) return;
+            Location<World> targetBlockLocation = optionalLocation.get();
             Lock lockedBlock = LockContainer.getInstance().get(targetBlockLocation);
             if (lockedBlock == null) return;
             if (ValidLockBlockCheckUtil.isValidLockBlock(targetBlock.getState().getType())) {
-                System.out.println(Sponge.getServer().getPlayer(lockedBlock.getOwner()));
                 if (!lockedBlock.isPlayerTrusted(player)) {
                     player.sendMessage(Text.of("Chest is locked!"));
                     event.setCancelled(true);
-
                 }
             }
         }

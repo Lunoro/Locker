@@ -19,16 +19,14 @@ public class BlockPlaceListener {
     @Listener
     public void onBlockPlace(ChangeBlockEvent.Place event) {
         BlockSnapshot block = event.getTransactions().get(0).getFinal();
-        Optional<Player> optPlayer = event.getCause().first(Player.class);
-        if (optPlayer.isPresent()) {
-            Player player = optPlayer.get();
+        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
+        if (optionalPlayer.isPresent()) {
+            Player player = optionalPlayer.get();
             if (ValidLockBlockCheckUtil.isValidLockBlock(block.getState().getType())) {
                 Lock newLock = new Lock(player.getUniqueId(), block.getLocation().get());
                 LockContainer.getInstance().addLock(newLock);
                 player.sendMessage(Text.of("Locked block placed."));
-                System.out.println(newLock.getBlockLocation());
                 if (newLock.getBlockTypeOfLock().getName().contains("_door")) {
-                    System.out.println("Door detected!");
                     createDoor(newLock, player);
                 }
             }
@@ -37,8 +35,6 @@ public class BlockPlaceListener {
 
     private void createDoor(Lock lock, Player player) {
         Location<World> otherDoorHalfLocation = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLockLocation(lock);
-        System.out.println(otherDoorHalfLocation);
         LockContainer.getInstance().addLock(new Lock(player.getUniqueId(), otherDoorHalfLocation));
-        System.out.println(LockContainer.getInstance().get(otherDoorHalfLocation).getOwner());
     }
 }

@@ -33,7 +33,6 @@ public class ViewedBlockUtil {
         Optional<BlockRayHit<World>> hitOptional = blockRay.end();
         if (hitOptional.isPresent()) {
             Location<World> location = hitOptional.get().getLocation();
-            System.out.println("LOCATION HERE" + location);
             return location;
         }
         return null;

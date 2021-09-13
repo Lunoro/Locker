@@ -3,6 +3,7 @@ package de.lunoro.locker;
 import com.google.inject.Inject;
 import de.lunoro.locker.commands.TrustCommand;
 import de.lunoro.locker.commands.UnlockCommand;
+import de.lunoro.locker.listeners.BlockBreakListener;
 import de.lunoro.locker.listeners.BlockPlaceListener;
 import de.lunoro.locker.listeners.BlockInteractListener;
 import de.lunoro.locker.lock.LockContainer;
@@ -47,11 +48,7 @@ public class Locker {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        try {
-            Files.createDirectories(configDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        createDirectories();
         instance = this;
         lockContainer = LockContainer.getInstance();
         lockContainer.load();
@@ -80,5 +77,14 @@ public class Locker {
     private void registerListeners() {
         Sponge.getEventManager().registerListeners(this, new BlockPlaceListener());
         Sponge.getEventManager().registerListeners(this, new BlockInteractListener());
+        Sponge.getEventManager().registerListeners(this, new BlockBreakListener());
+    }
+
+    private void createDirectories() {
+        try {
+            Files.createDirectories(configDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

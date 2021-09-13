@@ -1,5 +1,6 @@
 package de.lunoro.locker.lock;
 
+import de.lunoro.locker.util.AdjoiningLockUtil;
 import lombok.Getter;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.living.player.Player;
@@ -29,6 +30,25 @@ public class Lock {
 
     public void trust(Player player) {
         trustedMembers.add(player.getUniqueId());
+    }
+
+    public void unlock() {
+        Lock lockNextTo = AdjoiningLockUtil.getInstance().getAdjoiningLock(this);
+        LockContainer lockContainer = LockContainer.getInstance();
+        unlockVerticalAdjoiningLock(lockNextTo);
+        if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
+            lockContainer.delLock(lockNextTo.getBlockLocation());
+        }
+        lockContainer.delLock(this.getBlockLocation());
+    }
+
+    private void unlockVerticalAdjoiningLock(Lock lockNextTo) {
+        if (lockNextTo == null) {
+            lockNextTo = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLock(this);
+            if (lockNextTo.getBlockTypeOfLock().getName().contains("_door")) {
+                LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
+            }
+        }
     }
 
     public boolean isPlayerTrusted(Player player) {
