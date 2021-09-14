@@ -10,7 +10,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
-public class ViewedBlockUtil {
+public final class ViewedBlockUtil {
 
     public static Location<World> getViewedBlockLocation(Player player) {
         BlockRay<World> blockRay = BlockRay.from(player).select(BlockRay.blockTypeFilter(

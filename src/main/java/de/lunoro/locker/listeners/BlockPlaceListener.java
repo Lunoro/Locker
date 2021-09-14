@@ -34,7 +34,7 @@ public class BlockPlaceListener {
     }
 
     private void createDoor(Lock lock, Player player) {
-        Location<World> otherDoorHalfLocation = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLockLocation(lock);
+        Location<World> otherDoorHalfLocation = AdjoiningLockUtil.getUpperOrUnderAdjoiningLockLocation(lock);
         LockContainer.getInstance().addLock(new Lock(player.getUniqueId(), otherDoorHalfLocation));
     }
 }

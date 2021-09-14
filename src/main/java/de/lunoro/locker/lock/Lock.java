@@ -33,7 +33,7 @@ public class Lock {
     }
 
     public void unlock() {
-        Lock lockNextTo = AdjoiningLockUtil.getInstance().getAdjoiningLock(this);
+        Lock lockNextTo = AdjoiningLockUtil.getAdjoiningLock(this);
         LockContainer lockContainer = LockContainer.getInstance();
         unlockVerticalAdjoiningLock(lockNextTo);
         if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
@@ -44,7 +44,7 @@ public class Lock {
 
     private void unlockVerticalAdjoiningLock(Lock lockNextTo) {
         if (lockNextTo == null) {
-            lockNextTo = AdjoiningLockUtil.getInstance().getUpperOrUnderAdjoiningLock(this);
+            lockNextTo = AdjoiningLockUtil.getUpperOrUnderAdjoiningLock(this);
             if (lockNextTo.getBlockTypeOfLock().getName().contains("_door")) {
                 LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
             }
