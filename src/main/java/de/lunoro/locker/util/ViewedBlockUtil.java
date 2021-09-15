@@ -1,6 +1,5 @@
 package de.lunoro.locker.util;
 
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.util.blockray.BlockRay;

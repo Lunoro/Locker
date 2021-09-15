@@ -3,11 +3,13 @@ package de.lunoro.locker;
 import com.google.inject.Inject;
 import de.lunoro.locker.commands.TrustCommand;
 import de.lunoro.locker.commands.UnlockCommand;
+import de.lunoro.locker.config.Config;
 import de.lunoro.locker.listeners.BlockBreakListener;
 import de.lunoro.locker.listeners.BlockPlaceListener;
 import de.lunoro.locker.listeners.BlockInteractListener;
 import de.lunoro.locker.lock.LockContainer;
 import lombok.Getter;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -34,6 +36,7 @@ import java.nio.file.Path;
 public class Locker {
 
     private LockContainer lockContainer;
+    private Config config;
 
     @Getter
     private static Locker instance;
@@ -48,17 +51,25 @@ public class Locker {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        createDirectories();
         instance = this;
-        lockContainer = LockContainer.getInstance();
-        lockContainer.load();
+        createDirectories();
+        fileSetup();
         registerListeners();
         registerCommands();
+    }
+
+    private void fileSetup() {
+        lockContainer = LockContainer.getInstance();
+        config = Config.getInstance();
+        lockContainer.load();
+        config.create();
+        config.load();
     }
 
     @Listener
     public void onServerStop(GameStoppedServerEvent event) {
         lockContainer.save();
+        config.save();
     }
 
     private void registerCommands() {
