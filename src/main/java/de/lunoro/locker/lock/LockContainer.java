@@ -2,8 +2,6 @@ package de.lunoro.locker.lock;
 
 import de.lunoro.locker.Locker;
 import lombok.Getter;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -12,8 +10,8 @@ import java.util.List;
 
 public class LockContainer {
 
+    private static LockContainer instance;
     @Getter
-    private static final LockContainer instance = new LockContainer();
     private List<Lock> lockList;
     private final LockLoader lockLoader;
 
@@ -48,5 +46,12 @@ public class LockContainer {
             }
         }
         return null;
+    }
+
+    public static LockContainer getInstance() {
+        if (instance == null) {
+            instance = new LockContainer();
+        }
+        return instance;
     }
 }

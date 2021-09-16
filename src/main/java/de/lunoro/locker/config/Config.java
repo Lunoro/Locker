@@ -22,6 +22,7 @@ public class Config {
     private Config() {
         locker = Locker.getInstance();
         path = Paths.get(locker.getConfigDir().toString() + "\\config.conf");
+        create();
         loader = HoconConfigurationLoader.builder().setPath(path).build();
         initializeNode();
     }
@@ -34,7 +35,7 @@ public class Config {
         }
     }
 
-    public void create() {
+    private void create() {
         try {
             if (!Files.exists(path)) {
                 Sponge.getAssetManager().getAsset(locker, "config.conf").get().copyToFile(path);
@@ -60,8 +61,8 @@ public class Config {
         }
     }
 
-    public CommentedConfigurationNode getNode(String... nodePath) {
-        return rootNode.getNode((Object) nodePath);
+    public CommentedConfigurationNode getNode(Object... nodePath) {
+        return rootNode.getNode(nodePath);
     }
 
     public static Config getInstance() {

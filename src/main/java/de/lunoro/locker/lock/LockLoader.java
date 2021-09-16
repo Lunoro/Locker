@@ -1,6 +1,7 @@
 package de.lunoro.locker.lock;
 
 import com.google.common.reflect.TypeToken;
+import de.lunoro.locker.sql.SQL;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -24,6 +25,8 @@ public class LockLoader {
         this.loader = HoconConfigurationLoader.builder().setPath(path).build();
         registerSerializer();
     }
+
+    LockSQLSerializer lockSQLSerializer = new LockSQLSerializer();
 
     public List<Lock> load() {
         List<Lock> list = new ArrayList<>();

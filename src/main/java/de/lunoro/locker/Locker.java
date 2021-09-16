@@ -1,6 +1,7 @@
 package de.lunoro.locker;
 
 import com.google.inject.Inject;
+import de.lunoro.locker.commands.SQLCommand;
 import de.lunoro.locker.commands.TrustCommand;
 import de.lunoro.locker.commands.UnlockCommand;
 import de.lunoro.locker.config.Config;
@@ -8,8 +9,8 @@ import de.lunoro.locker.listeners.BlockBreakListener;
 import de.lunoro.locker.listeners.BlockPlaceListener;
 import de.lunoro.locker.listeners.BlockInteractListener;
 import de.lunoro.locker.lock.LockContainer;
+import de.lunoro.locker.sql.SQL;
 import lombok.Getter;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -35,10 +36,11 @@ import java.nio.file.Path;
 )
 public class Locker {
 
+    @Getter
     private LockContainer lockContainer;
     private Config config;
+    private SQL sql;
 
-    @Getter
     private static Locker instance;
 
     @Inject
@@ -46,30 +48,41 @@ public class Locker {
 
     @Inject
     @ConfigDir(sharedRoot = false)
-    @Getter
     private Path configDir;
+
+    public Path getConfigDir() {
+        return configDir;
+    }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         instance = this;
         createDirectories();
         fileSetup();
+        sqlSetup();
         registerListeners();
         registerCommands();
     }
 
+    private void sqlSetup() {
+        if (Config.getInstance().getNode("useMysql").getBoolean()) {
+            sql = SQL.getInstance();
+            sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64))");
+        }
+    }
+
     private void fileSetup() {
-        lockContainer = LockContainer.getInstance();
         config = Config.getInstance();
-        lockContainer.load();
-        config.create();
+        lockContainer = LockContainer.getInstance();
         config.load();
+        lockContainer.load();
     }
 
     @Listener
     public void onServerStop(GameStoppedServerEvent event) {
         lockContainer.save();
         config.save();
+        sql.disconnect();
     }
 
     private void registerCommands() {
@@ -77,11 +90,18 @@ public class Locker {
                 CommandSpec.builder()
                         .executor(new TrustCommand())
                         .build(), "trust");
+
         Sponge.getCommandManager().register(this,
                 CommandSpec.builder()
                         .executor(new UnlockCommand())
                         .description(Text.of(""))
                         .build(), "unlock");
+
+        Sponge.getCommandManager().register(this,
+                CommandSpec.builder()
+                        .executor(new SQLCommand())
+                        .description(Text.of(""))
+                        .build(), "sql");
 
     }
 
@@ -97,5 +117,9 @@ public class Locker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Locker getInstance() {
+        return instance;
     }
 }

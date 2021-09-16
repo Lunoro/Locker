@@ -21,7 +21,7 @@ public class TrustCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) return null;
+        if (!(src instanceof Player)) return CommandResult.empty();
         Player player = (Player) src;
         Optional<Player> optionalPlayer = args.<Player>getOne("player");
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
@@ -30,7 +30,7 @@ public class TrustCommand implements CommandExecutor {
         Player target = optionalPlayer.get();
         if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
-            if (lock == null) return null;
+            if (lock == null) return CommandResult.empty();
             if (lock.getOwner().equals(player.getUniqueId())) {
                 lock.trust(target);
                 player.sendMessage(Text.of("Player " + target + " is now trusted!"));

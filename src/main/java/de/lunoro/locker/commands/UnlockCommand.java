@@ -19,7 +19,7 @@ public class UnlockCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) return null;
+        if (!(src instanceof Player)) return CommandResult.empty();
         Player player = (Player) src;
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
         BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
