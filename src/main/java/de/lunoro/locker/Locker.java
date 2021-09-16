@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
@@ -56,12 +57,23 @@ public class Locker {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        registerListeners();
+        registerCommands();
+    }
+
+    @Listener
+    public void onServerStop(GameStoppedServerEvent event) {
+        lockContainer.save();
+        config.save();
+        sql.disconnect();
+    }
+
+    @Listener
+    public void preServerStart(GamePreInitializationEvent event) {
         instance = this;
         createDirectories();
         fileSetup();
         sqlSetup();
-        registerListeners();
-        registerCommands();
     }
 
     private void sqlSetup() {
@@ -78,11 +90,12 @@ public class Locker {
         lockContainer.load();
     }
 
-    @Listener
-    public void onServerStop(GameStoppedServerEvent event) {
-        lockContainer.save();
-        config.save();
-        sql.disconnect();
+    private void createDirectories() {
+        try {
+            Files.createDirectories(configDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void registerCommands() {
@@ -109,14 +122,6 @@ public class Locker {
         Sponge.getEventManager().registerListeners(this, new BlockPlaceListener());
         Sponge.getEventManager().registerListeners(this, new BlockInteractListener());
         Sponge.getEventManager().registerListeners(this, new BlockBreakListener());
-    }
-
-    private void createDirectories() {
-        try {
-            Files.createDirectories(configDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static Locker getInstance() {

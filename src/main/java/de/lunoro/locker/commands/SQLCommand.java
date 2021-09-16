@@ -15,6 +15,7 @@ public class SQLCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        // TODO: 16.09.2021 remove this 
         List<Lock> lockList = LockContainer.getInstance().getLockList();
         for (Lock lock : lockList) {
             SQL.getInstance().update("INSERT INTO Locker (owner) VALUES ('" + lock.getOwner().toString() + "')");
