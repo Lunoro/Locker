@@ -45,7 +45,7 @@ public class Lock {
     }
 
     private void unlockHorizontalAdjoiningLock() {
-        Lock horizontalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
+        Lock horizontalAdjoiningLock = AdjoiningLockUtil.getHorizontalAdjoiningLock(this);
         if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("_door")) {
             LockContainer.getInstance().delLock(horizontalAdjoiningLock);
             System.out.println("Door unlocked");
