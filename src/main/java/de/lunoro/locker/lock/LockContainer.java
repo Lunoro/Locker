@@ -39,7 +39,12 @@ public class LockContainer {
         lockList.remove(lock);
     }
 
+    public void delLock(Lock lock) {
+        lockList.remove(lock);
+    }
+
     public Lock get(Location<World> location) {
+        System.out.println(lockList.get(0).getBlockLocation());
         for (Lock lock : lockList) {
             if (lock.getBlockLocation().equals(location)) {
                 return lock;

@@ -18,7 +18,7 @@ public final class AdjoiningLockUtil {
     // L _ _ _ X-Axis
     // B = locked block; X = checked blocks; 0 = not checked blocks
 
-    public static Lock getUpperOrUnderAdjoiningLock(Lock lock) {
+    public static Lock getVerticalAdjoiningLock(Lock lock) {
         Location<World> adjoiningLockLocation = getUpperOrUnderAdjoiningLockLocation(lock);
         return LockContainer.getInstance().get(adjoiningLockLocation);
     }
@@ -43,7 +43,7 @@ public final class AdjoiningLockUtil {
     // L _ _ _ X-Axis
     // B = locked block; X = checked blocks; 0 = not checked blocks
 
-    public static Lock getAdjoiningLock(Lock lock) {
+    public static Lock getHorizontalAdjoiningLock(Lock lock) {
         return returnNextLockOnZAndXAxis(lock);
     }
 

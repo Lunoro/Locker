@@ -15,10 +15,8 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
@@ -56,30 +54,31 @@ public class Locker {
     }
 
     @Listener
-    public void onServerStart(GameStartedServerEvent event) {
+    public void onServerStart(GameStartingServerEvent event) {
+        instance = this;
+        sqlSetup();
         registerListeners();
         registerCommands();
     }
 
     @Listener
-    public void onServerStop(GameStoppedServerEvent event) {
+    public void onServerStarted(GameStartedServerEvent event) {
+        instance = this;
+        createDirectories();
+        fileSetup();
+    }
+
+    @Listener
+    public void onServerStop(GameStoppingServerEvent event) {
         lockContainer.save();
         config.save();
         sql.disconnect();
     }
 
-    @Listener
-    public void preServerStart(GamePreInitializationEvent event) {
-        instance = this;
-        createDirectories();
-        fileSetup();
-        sqlSetup();
-    }
-
     private void sqlSetup() {
         if (Config.getInstance().getNode("useMysql").getBoolean()) {
             sql = SQL.getInstance();
-            sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64))");
+            sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64), worldUuid VARCHAR(64), blockX INT(64), blockY Int(64), blockZ INT(64), trustedMembers VARCHAR(64))");
         }
     }
 

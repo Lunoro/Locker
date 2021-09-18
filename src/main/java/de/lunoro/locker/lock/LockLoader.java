@@ -1,7 +1,7 @@
 package de.lunoro.locker.lock;
 
 import com.google.common.reflect.TypeToken;
-import de.lunoro.locker.sql.SQL;
+import de.lunoro.locker.lock.sql.LockSQLSerializer;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -28,11 +28,15 @@ public class LockLoader {
 
     LockSQLSerializer lockSQLSerializer = new LockSQLSerializer();
 
+    // TODO: 19.09.2021 location doesn't load on restart
     public List<Lock> load() {
         List<Lock> list = new ArrayList<>();
         for (Object obj : node.getChildrenMap().keySet()) {
             try {
                 Lock lock = node.getNode(obj.toString()).getValue(TypeToken.of(Lock.class));
+                System.out.println(lock.getOwner().toString());
+                System.out.println(lock.getTrustedMembers());
+                System.out.println(lock.getBlockLocation());
                 list.add(lock);
             } catch (ObjectMappingException e) {
                 e.printStackTrace();
@@ -43,6 +47,8 @@ public class LockLoader {
 
     public void save(Lock lock) {
         try {
+            System.out.println("SAVE LOCKS");
+            System.out.println(lock.getBlockLocation());
             node.getNode(UUID.randomUUID()).setValue(TypeToken.of(Lock.class), lock);
         } catch (ObjectMappingException e) {
             e.printStackTrace();

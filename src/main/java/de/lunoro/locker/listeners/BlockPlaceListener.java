@@ -24,11 +24,14 @@ public class BlockPlaceListener {
             Player player = optionalPlayer.get();
             if (ValidLockBlockCheckUtil.isValidLockBlock(block.getState().getType())) {
                 Lock newLock = new Lock(player.getUniqueId(), block.getLocation().get());
-                LockContainer.getInstance().addLock(newLock);
+                System.out.println(newLock);
+                LockContainer.getInstance()
+                        .addLock(newLock);
                 player.sendMessage(Text.of("Locked block placed."));
                 if (newLock.getBlockTypeOfLock().getName().contains("_door")) {
                     createDoor(newLock, player);
                 }
+                System.out.println(LockContainer.getInstance().getLockList());
             }
         }
     }

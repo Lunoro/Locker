@@ -7,8 +7,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class Lock {
@@ -20,11 +19,13 @@ public class Lock {
     public Lock(UUID owner, Location<World> blockLocation) {
         this.blockLocation = blockLocation;
         this.owner = owner;
+        this.trustedMembers = new ArrayList<>(Collections.singletonList(owner));
+        System.out.println(this.getBlockLocation());
     }
 
     public Lock(UUID owner, Location blockLocation, List<UUID> trustedMembers) {
-        this.blockLocation = blockLocation;
         this.owner = owner;
+        this.blockLocation = blockLocation;
         this.trustedMembers = trustedMembers;
     }
 
@@ -32,29 +33,34 @@ public class Lock {
         trustedMembers.add(player.getUniqueId());
     }
 
-    public void unlock() {
-        Lock lockNextTo = AdjoiningLockUtil.getAdjoiningLock(this);
-        LockContainer lockContainer = LockContainer.getInstance();
-        unlockVerticalAdjoiningLock(lockNextTo);
-        if (lockNextTo.getBlockTypeOfLock().getName().contains("chest")) {
-            lockContainer.delLock(lockNextTo.getBlockLocation());
-        }
-        lockContainer.delLock(this.getBlockLocation());
+    public void unlockSingleBlock() {
+        LockContainer.getInstance().delLock(this);
     }
 
-    private void unlockVerticalAdjoiningLock(Lock lockNextTo) {
-        if (lockNextTo == null) {
-            lockNextTo = AdjoiningLockUtil.getUpperOrUnderAdjoiningLock(this);
-            if (lockNextTo.getBlockTypeOfLock().getName().contains("_door")) {
-                LockContainer.getInstance().delLock(lockNextTo.getBlockLocation());
-            }
+    public void unlock() {
+        unlockHorizontalAdjoiningLock();
+        unlockVerticalAdjoiningLock();
+        LockContainer.getInstance().delLock(this);
+        System.out.println("Block unlocked");
+    }
+
+    private void unlockHorizontalAdjoiningLock() {
+        Lock horizontalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
+        if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("_door")) {
+            LockContainer.getInstance().delLock(horizontalAdjoiningLock);
+            System.out.println("Door unlocked");
+        }
+    }
+
+    private void unlockVerticalAdjoiningLock() {
+        Lock verticalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
+        if (verticalAdjoiningLock != null && verticalAdjoiningLock.getBlockTypeOfLock().getName().contains("chest")) {
+            LockContainer.getInstance().delLock(verticalAdjoiningLock);
+            System.out.println("Double Chest unlocked");
         }
     }
 
     public boolean isPlayerTrusted(Player player) {
-        if (owner.equals(player.getUniqueId())) {
-            return true;
-        }
         for (UUID trustedMember : trustedMembers) {
             if (trustedMember.equals(player.getUniqueId())) {
                 return true;

@@ -5,6 +5,7 @@ import de.lunoro.locker.lock.LockContainer;
 import de.lunoro.locker.util.ValidLockBlockCheckUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.text.Text;
@@ -17,15 +18,19 @@ public class BlockBreakListener {
 
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Break event) {
-        BlockSnapshot breakBlock = event.getTransactions().get(0).getFinal();
-        Optional<Location<World>> optionalLocation = breakBlock.getLocation();
+        if(!(event.getSource() instanceof Player)) return;
+        BlockSnapshot breakingBlock = event.getTransactions().get(0).getOriginal();
+        Optional<Location<World>> optionalLocation = breakingBlock.getLocation();
         if (!(optionalLocation.isPresent())) return;
         Location<World> location = optionalLocation.get();
         Lock lock = LockContainer.getInstance().get(location);
-        if (ValidLockBlockCheckUtil.isValidLockBlock(breakBlock.getState().getType()))
+        System.out.println(breakingBlock.getState().getType());
+        if (ValidLockBlockCheckUtil.isValidLockBlock(breakingBlock.getState().getType())) {
             if (lock != null) {
+                lock.unlockSingleBlock();
                 Sponge.getServer().getPlayer(lock.getOwner()).get().sendMessage(Text.of("Lock unlocked."));
-                lock.unlock();
+                System.out.println("Lock unlocked.");
             }
+        }
     }
 }
