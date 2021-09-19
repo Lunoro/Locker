@@ -1,6 +1,9 @@
 package de.lunoro.locker.lock;
 
 import de.lunoro.locker.Locker;
+import de.lunoro.locker.config.Config;
+import de.lunoro.locker.lock.sql.LockSQLLoader;
+import de.lunoro.locker.sql.SQL;
 import lombok.Getter;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -13,20 +16,39 @@ public class LockContainer {
     private static LockContainer instance;
     @Getter
     private List<Lock> lockList;
-    private final LockLoader lockLoader;
+    private LockLoader lockLoader;
+    private LockSQLLoader lockSQLLoader;
+    private final boolean sqlEnabled;
 
     private LockContainer() {
-        lockLoader = new LockLoader(Paths.get(Locker.getInstance().getConfigDir() + "\\lock.conf"));
+        sqlEnabled = Config.getInstance().getNode("useSql").getBoolean();
+        if (sqlEnabled) {
+            lockSQLLoader = LockSQLLoader.getInstance();
+        } else {
+            lockLoader = new LockLoader(Paths.get(Locker.getInstance().getConfigDir() + "\\lock.conf"));
+        }
     }
 
     public void load() {
-        lockList = lockLoader.load();
+        System.out.println(sqlEnabled);
+        if (sqlEnabled) {
+            lockList = lockSQLLoader.load();
+        } else {
+            lockList = lockLoader.load();
+        }
     }
 
     public void save() {
-        lockLoader.clear();
-        for (Lock lock : lockList) {
-            lockLoader.save(lock);
+        if (sqlEnabled) {
+            lockSQLLoader.clear();
+            for (Lock lock : lockList) {
+                lockSQLLoader.save(lock);
+            }
+        } else {
+            lockLoader.clear();
+            for (Lock lock : lockList) {
+                lockLoader.save(lock);
+            }
         }
     }
 
@@ -44,7 +66,6 @@ public class LockContainer {
     }
 
     public Lock get(Location<World> location) {
-        System.out.println(lockList.get(0).getBlockLocation());
         for (Lock lock : lockList) {
             if (lock.getBlockLocation().equals(location)) {
                 return lock;

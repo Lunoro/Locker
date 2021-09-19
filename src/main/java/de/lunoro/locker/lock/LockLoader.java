@@ -29,12 +29,8 @@ public class LockLoader {
     public List<Lock> load() {
         List<Lock> list = new ArrayList<>();
         for (Object obj : node.getChildrenMap().keySet()) {
-            System.out.println(obj.toString());
             try {
                 Lock lock = node.getNode(obj.toString()).getValue(TypeToken.of(Lock.class));
-                System.out.println(lock.getOwner().toString());
-                System.out.println(lock.getTrustedMembers());
-                System.out.println(lock.getBlockLocation());
                 list.add(lock);
             } catch (ObjectMappingException e) {
                 e.printStackTrace();
@@ -45,8 +41,6 @@ public class LockLoader {
 
     public void save(Lock lock) {
         try {
-            System.out.println("SAVE LOCKS");
-            System.out.println(lock.getBlockLocation());
             node.getNode(UUID.randomUUID()).setValue(TypeToken.of(Lock.class), lock);
         } catch (ObjectMappingException e) {
             e.printStackTrace();

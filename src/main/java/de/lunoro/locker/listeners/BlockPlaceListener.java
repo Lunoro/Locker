@@ -20,18 +20,17 @@ public class BlockPlaceListener {
     public void onBlockPlace(ChangeBlockEvent.Place event) {
         BlockSnapshot block = event.getTransactions().get(0).getFinal();
         Optional<Player> optionalPlayer = event.getCause().first(Player.class);
+        System.out.println(LockContainer.getInstance().getLockList());
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
             if (ValidLockBlockCheckUtil.isValidLockBlock(block.getState().getType())) {
                 Lock newLock = new Lock(player.getUniqueId(), block.getLocation().get());
-                System.out.println(newLock);
                 LockContainer.getInstance()
                         .addLock(newLock);
                 player.sendMessage(Text.of("Locked block placed."));
                 if (newLock.getBlockTypeOfLock().getName().contains("_door")) {
                     createDoor(newLock, player);
                 }
-                System.out.println(LockContainer.getInstance().getLockList());
             }
         }
     }

@@ -20,7 +20,6 @@ public class Lock {
         this.blockLocation = blockLocation;
         this.owner = owner;
         this.trustedMembers = new ArrayList<>(Collections.singletonList(owner));
-        System.out.println(this.getBlockLocation());
     }
 
     public Lock(UUID owner, Location blockLocation, List<UUID> trustedMembers) {
@@ -42,14 +41,12 @@ public class Lock {
         unlockHorizontalAdjoiningLock();
         unlockVerticalAdjoiningLock();
         LockContainer.getInstance().delLock(this);
-        System.out.println("Block unlocked");
     }
 
     private void unlockHorizontalAdjoiningLock() {
         Lock verticalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
         if (verticalAdjoiningLock != null && verticalAdjoiningLock.getBlockTypeOfLock().getName().contains("_door")) {
             LockContainer.getInstance().delLock(verticalAdjoiningLock);
-            System.out.println("Door unlocked");
         }
     }
 
@@ -57,7 +54,6 @@ public class Lock {
         Lock horizontalAdjoiningLock = AdjoiningLockUtil.getHorizontalAdjoiningLock(this);
         if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("chest")) {
             LockContainer.getInstance().delLock(horizontalAdjoiningLock);
-            System.out.println("Double Chest unlocked");
         }
     }
 

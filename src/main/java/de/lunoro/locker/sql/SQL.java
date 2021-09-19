@@ -18,7 +18,6 @@ public class SQL {
         this.port = config.getNode("mysql").getNode("port").getValue().toString();
         this.username = config.getNode("mysql").getNode("username").getValue().toString();
         this.password = config.getNode("mysql").getNode("password").getValue().toString();
-        System.out.println(isConnected());
         connect();
     }
 
@@ -45,7 +44,6 @@ public class SQL {
     public void update(String qry) {
         if (Config.getInstance().getNode("useSql").getBoolean()) {
             try {
-                System.out.println(connection);
                 Statement statement = this.connection.createStatement();
                 statement.executeUpdate(qry);
                 statement.close();

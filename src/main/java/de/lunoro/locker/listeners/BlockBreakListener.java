@@ -24,12 +24,10 @@ public class BlockBreakListener {
         if (!(optionalLocation.isPresent())) return;
         Location<World> location = optionalLocation.get();
         Lock lock = LockContainer.getInstance().get(location);
-        System.out.println(breakingBlock.getState().getType());
         if (ValidLockBlockCheckUtil.isValidLockBlock(breakingBlock.getState().getType())) {
             if (lock != null) {
                 lock.unlockSingleBlockOrDoor();
                 Sponge.getServer().getPlayer(lock.getOwner()).get().sendMessage(Text.of("Lock unlocked."));
-                System.out.println("Lock unlocked.");
             }
         }
     }

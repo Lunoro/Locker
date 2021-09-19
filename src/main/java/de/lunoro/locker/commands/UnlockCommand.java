@@ -23,7 +23,6 @@ public class UnlockCommand implements CommandExecutor {
         Player player = (Player) src;
         Location<World> viewedBlockLocation = ViewedBlockUtil.getViewedBlockLocation(player);
         BlockType viewedBlockType = viewedBlockLocation.getBlock().getType();
-        System.out.println(viewedBlockType);
         if (ValidLockBlockCheckUtil.isValidLockBlock(viewedBlockType)) {
             Lock lock = LockContainer.getInstance().get(viewedBlockLocation);
             if (lock == null) return CommandResult.empty();
