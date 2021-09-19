@@ -63,9 +63,11 @@ public class Locker {
     }
 
     private void sqlSetup() {
+        System.out.println("BOOLEAN: " + Config.getInstance().getNode("useSql").getBoolean());
         if (Config.getInstance().getNode("useSql").getBoolean()) {
             sql = SQL.getInstance();
-            sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64), worldUuid VARCHAR(64), blockX INT(64), blockY Int(64), blockZ INT(64), trustedMembers VARCHAR(64))");
+            sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64), worldName VARCHAR(64), blockX INT(64), blockY Int(64), blockZ INT(64), trustedMembers VARCHAR(64))");
+            System.out.println("TABLE CREATED!");
         }
     }
 

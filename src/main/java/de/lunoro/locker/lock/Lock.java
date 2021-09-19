@@ -33,7 +33,8 @@ public class Lock {
         trustedMembers.add(player.getUniqueId());
     }
 
-    public void unlockSingleBlock() {
+    public void unlockSingleBlockOrDoor() {
+        unlockHorizontalAdjoiningLock();
         LockContainer.getInstance().delLock(this);
     }
 
@@ -45,17 +46,17 @@ public class Lock {
     }
 
     private void unlockHorizontalAdjoiningLock() {
-        Lock horizontalAdjoiningLock = AdjoiningLockUtil.getHorizontalAdjoiningLock(this);
-        if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("_door")) {
-            LockContainer.getInstance().delLock(horizontalAdjoiningLock);
+        Lock verticalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
+        if (verticalAdjoiningLock != null && verticalAdjoiningLock.getBlockTypeOfLock().getName().contains("_door")) {
+            LockContainer.getInstance().delLock(verticalAdjoiningLock);
             System.out.println("Door unlocked");
         }
     }
 
     private void unlockVerticalAdjoiningLock() {
-        Lock verticalAdjoiningLock = AdjoiningLockUtil.getVerticalAdjoiningLock(this);
-        if (verticalAdjoiningLock != null && verticalAdjoiningLock.getBlockTypeOfLock().getName().contains("chest")) {
-            LockContainer.getInstance().delLock(verticalAdjoiningLock);
+        Lock horizontalAdjoiningLock = AdjoiningLockUtil.getHorizontalAdjoiningLock(this);
+        if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("chest")) {
+            LockContainer.getInstance().delLock(horizontalAdjoiningLock);
             System.out.println("Double Chest unlocked");
         }
     }

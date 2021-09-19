@@ -18,6 +18,7 @@ public class SQL {
         this.port = config.getNode("mysql").getNode("port").getValue().toString();
         this.username = config.getNode("mysql").getNode("username").getValue().toString();
         this.password = config.getNode("mysql").getNode("password").getValue().toString();
+        System.out.println(isConnected());
         connect();
     }
 

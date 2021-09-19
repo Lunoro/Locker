@@ -18,7 +18,7 @@ public class BlockBreakListener {
 
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Break event) {
-        if(!(event.getSource() instanceof Player)) return;
+        if (!(event.getSource() instanceof Player)) return;
         BlockSnapshot breakingBlock = event.getTransactions().get(0).getOriginal();
         Optional<Location<World>> optionalLocation = breakingBlock.getLocation();
         if (!(optionalLocation.isPresent())) return;
@@ -27,7 +27,7 @@ public class BlockBreakListener {
         System.out.println(breakingBlock.getState().getType());
         if (ValidLockBlockCheckUtil.isValidLockBlock(breakingBlock.getState().getType())) {
             if (lock != null) {
-                lock.unlockSingleBlock();
+                lock.unlockSingleBlockOrDoor();
                 Sponge.getServer().getPlayer(lock.getOwner()).get().sendMessage(Text.of("Lock unlocked."));
                 System.out.println("Lock unlocked.");
             }
