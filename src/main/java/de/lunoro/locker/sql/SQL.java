@@ -42,21 +42,25 @@ public class SQL {
     }
 
     public void update(String qry) {
-        try {
-            System.out.println(connection);
-            Statement statement = this.connection.createStatement();
-            statement.executeUpdate(qry);
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (Config.getInstance().getNode("useSql").getBoolean()) {
+            try {
+                System.out.println(connection);
+                Statement statement = this.connection.createStatement();
+                statement.executeUpdate(qry);
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public ResultSet getResult(String query) {
-        try {
-            return this.connection.createStatement().executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (Config.getInstance().getNode("useSql").getBoolean()) {
+            try {
+                return this.connection.createStatement().executeQuery(query);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

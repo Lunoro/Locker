@@ -69,14 +69,14 @@ public class Locker {
     }
 
     @Listener
-    public void onServerStop(GameStoppingServerEvent event) {
+    public void onServerStop(GameStoppedEvent event) {
         lockContainer.save();
         config.save();
         sql.disconnect();
     }
 
     private void sqlSetup() {
-        if (Config.getInstance().getNode("useMysql").getBoolean()) {
+        if (Config.getInstance().getNode("useSql").getBoolean()) {
             sql = SQL.getInstance();
             sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64), worldUuid VARCHAR(64), blockX INT(64), blockY Int(64), blockZ INT(64), trustedMembers VARCHAR(64))");
         }
