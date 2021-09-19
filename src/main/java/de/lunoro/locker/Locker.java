@@ -56,23 +56,10 @@ public class Locker {
     @Listener
     public void onServerStart(GameStartingServerEvent event) {
         instance = this;
+        initializeFiles();
         sqlSetup();
         registerListeners();
         registerCommands();
-    }
-
-    @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        instance = this;
-        createDirectories();
-        fileSetup();
-    }
-
-    @Listener
-    public void onServerStop(GameStoppedEvent event) {
-        lockContainer.save();
-        config.save();
-        sql.disconnect();
     }
 
     private void sqlSetup() {
@@ -82,11 +69,27 @@ public class Locker {
         }
     }
 
-    private void fileSetup() {
+    private void initializeFiles() {
         config = Config.getInstance();
         lockContainer = LockContainer.getInstance();
+    }
+
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        createDirectories();
+        fileSetup();
+    }
+
+    private void fileSetup() {
         config.load();
         lockContainer.load();
+    }
+
+    @Listener
+    public void onStoppingEvent(GameStoppingServerEvent event) {
+        lockContainer.save();
+        config.save();
+        SQL.getInstance().disconnect();
     }
 
     private void createDirectories() {

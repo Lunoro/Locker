@@ -26,10 +26,6 @@ public class SQLCommand implements CommandExecutor {
         for (Lock lock : LockContainer.getInstance().getLockList()) {
             SQL.getInstance().update("TRUNCATE locker");
             if (lock != null) {
-                System.out.println(lock.getOwner().toString());
-                System.out.println(lock.getBlockLocation());
-                System.out.println(lock.getBlockLocation().getExtent());
-                System.out.println(lock.getBlockLocation().getExtent().getUniqueId());
                 SQL.getInstance().update("INSERT INTO Locker (owner, worldUuid, blockX, blockY, blockZ ,trustedMembers) VALUES ('"
                         + lock.getOwner().toString() +
                         "','" + lock.getBlockLocation().getExtent().getUniqueId() +

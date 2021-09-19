@@ -26,12 +26,10 @@ public class LockLoader {
         registerSerializer();
     }
 
-    LockSQLSerializer lockSQLSerializer = new LockSQLSerializer();
-
-    // TODO: 19.09.2021 location doesn't load on restart
     public List<Lock> load() {
         List<Lock> list = new ArrayList<>();
         for (Object obj : node.getChildrenMap().keySet()) {
+            System.out.println(obj.toString());
             try {
                 Lock lock = node.getNode(obj.toString()).getValue(TypeToken.of(Lock.class));
                 System.out.println(lock.getOwner().toString());
