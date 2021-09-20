@@ -1,6 +1,6 @@
 # Locker
 
-Minecraft Sponge Plugin for locking chests, doors and other blocks.
+Minecraft sponge plugin for locking chests, doors and other blocks.
 
 # Supported Blocks:
 
