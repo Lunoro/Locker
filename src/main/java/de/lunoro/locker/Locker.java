@@ -120,13 +120,6 @@ public class Locker {
                         .executor(new UnlockCommand())
                         .description(Text.of(""))
                         .build(), "unlock");
-
-        Sponge.getCommandManager().register(this,
-                CommandSpec.builder()
-                        .executor(new SQLCommand())
-                        .description(Text.of(""))
-                        .build(), "sql");
-
     }
 
     private void registerListeners() {
