@@ -3,7 +3,10 @@ package de.lunoro.locker.lock;
 import de.lunoro.locker.util.AdjoiningLockUtil;
 import lombok.Getter;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.block.tileentity.carrier.Chest;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -53,6 +56,13 @@ public class Lock {
     private void unlockVerticalAdjoiningLock() {
         Lock horizontalAdjoiningLock = AdjoiningLockUtil.getHorizontalAdjoiningLock(this);
         if (horizontalAdjoiningLock != null && horizontalAdjoiningLock.getBlockTypeOfLock().getName().contains("chest")) {
+            Optional<TileEntity> optionalTile = horizontalAdjoiningLock.blockLocation.getTileEntity();
+            if (!(optionalTile.isPresent())) return;
+            Chest chest = (Chest) optionalTile.get();
+            Optional<Inventory> optionalInventory = chest.getDoubleChestInventory();
+            if (!(optionalInventory.isPresent())) return;
+            Inventory doubleChestInventory = optionalInventory.get();
+            if (doubleChestInventory.capacity() != 54) return;
             LockContainer.getInstance().delLock(horizontalAdjoiningLock);
         }
     }

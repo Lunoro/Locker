@@ -4,7 +4,7 @@ import de.lunoro.locker.config.Config;
 
 import java.sql.*;
 
-public class SQL {
+public final class SQL {
 
     private Connection connection;
     private String database, host, port, username, password;
@@ -12,19 +12,25 @@ public class SQL {
     private static SQL instance;
 
     private SQL() {
+        instance = this;
         Config config = Config.getInstance();
         this.database = config.getNode("mysql").getNode("database").getValue().toString();
         this.host = config.getNode("mysql").getNode("host").getValue().toString();
         this.port = config.getNode("mysql").getNode("port").getValue().toString();
         this.username = config.getNode("mysql").getNode("username").getValue().toString();
         this.password = config.getNode("mysql").getNode("password").getValue().toString();
-        connect();
+        if (!isConnected()) {
+            connect();
+            System.out.println("New Connection opened!");
+        }
     }
 
     public void connect() {
+        System.out.println("BEFORE CON " + isConnected());
         if (!isConnected()) {
             try {
                 this.connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + "?autoReconnect=true", this.username, this.password);
+                System.out.println("AFTER CON " + isConnected());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -65,7 +71,8 @@ public class SQL {
     }
 
     public boolean isConnected() {
-        return connection != null;
+        System.out.println(this.connection);
+        return this.connection != null;
     }
 
     public static SQL getInstance() {

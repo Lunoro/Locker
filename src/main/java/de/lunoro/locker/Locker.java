@@ -1,7 +1,6 @@
 package de.lunoro.locker;
 
 import com.google.inject.Inject;
-import de.lunoro.locker.commands.SQLCommand;
 import de.lunoro.locker.commands.TrustCommand;
 import de.lunoro.locker.commands.UnlockCommand;
 import de.lunoro.locker.config.Config;
@@ -39,6 +38,7 @@ public class Locker {
     private LockContainer lockContainer;
     private Config config;
     private SQL sql;
+    private boolean useSQL;
 
     private static Locker instance;
 
@@ -57,13 +57,14 @@ public class Locker {
     public void onServerStart(GameStartingServerEvent event) {
         instance = this;
         initializeFiles();
+        useSQL = Config.getInstance().getNode("useSql").getBoolean();
         sqlSetup();
         registerListeners();
         registerCommands();
     }
 
     private void sqlSetup() {
-        if (Config.getInstance().getNode("useSql").getBoolean()) {
+        if (useSQL) {
             sql = SQL.getInstance();
             sql.update("CREATE TABLE IF NOT EXISTS Locker (owner VARCHAR(64), worldName VARCHAR(64), blockX INT(64), blockY Int(64), blockZ INT(64), trustedMembers VARCHAR(64))");
         }
@@ -86,10 +87,18 @@ public class Locker {
     }
 
     @Listener
-    public void onStoppingEvent(GameStoppingServerEvent event) {
-        lockContainer.save();
+    public void onStoppedEvent(GameStoppedServerEvent event) {
         config.save();
-        SQL.getInstance().disconnect();
+        logger.info("Writing Data this might take a while.");
+        logger.warn("---DONT SHUT THE SERVER DOWN!---");
+        lockContainer.save();
+        sqlDisconnect();
+    }
+
+    private void sqlDisconnect() {
+        if (useSQL) {
+            sql.disconnect();
+        }
     }
 
     private void createDirectories() {
